@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "198584150759",
+    "project_id": "ustory-3b725",
+    "storage_bucket": "ustory-3b725.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198584150759:android:cc84094145aa1ecd291042",
+        "android_client_info": {
+          "package_name": "id.ac.umn.story"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_C-lo8zOonfXD_RQP5TpdMHDjgZp94b0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198584150759:android:5aa9ecbe740fd4b1291042",
+        "android_client_info": {
+          "package_name": "id.ac.umn.ustory"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_C-lo8zOonfXD_RQP5TpdMHDjgZp94b0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
