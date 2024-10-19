@@ -2,34 +2,36 @@ package id.ac.umn.story
 
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun BottomNavBar(navController: NavController) {
-    data class BottomNavItem(val route: String, val label: String)
-
     val items = listOf(
-        BottomNavItem("home", "Home"),
-        BottomNavItem("post", "Post"),
-        BottomNavItem("profile", "Profile")
+        BottomNavItem("home", R.drawable.home, "Home"),
+        BottomNavItem("post", R.drawable.newpost, "Post"),
+        BottomNavItem("profile", R.drawable.profile, "Profile")
     )
-    val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry.value?.destination?.route
 
-    BottomNavigation {
+    NavigationBar(
+        containerColor = MaterialTheme.colors.surface,
+    ) {
+        val currentRoute = navController.currentBackStackEntry?.destination?.route
         items.forEach { item ->
-            BottomNavigationItem(
-                icon = { /* Add icons if needed */ },
-                label = { Text(item.label) },
+            NavigationBarItem(
+                icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
+                label = { Text(item.title) },
                 selected = currentRoute == item.route,
                 onClick = {
                     navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
                         launchSingleTop = true
                         restoreState = true
                     }
@@ -38,3 +40,5 @@ fun BottomNavBar(navController: NavController) {
         }
     }
 }
+
+data class BottomNavItem(val route: String, val icon: Int, val title: String)

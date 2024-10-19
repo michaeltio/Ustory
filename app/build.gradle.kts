@@ -80,4 +80,8 @@ dependencies {
     //firebase
     implementation("com.google.firebase:firebase-auth-ktx:21.0.1")
     implementation("com.google.firebase:firebase-firestore-ktx:24.0.0")
+
+    implementation("com.google.firebase:firebase-storage-ktx:20.1.0")
+    implementation("io.coil-kt:coil-compose:2.1.0")
+
 }
