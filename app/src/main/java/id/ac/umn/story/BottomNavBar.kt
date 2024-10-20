@@ -11,23 +11,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import id.ac.umn.story.ui.theme.PrimaryBlue
 
 @Composable
 fun BottomNavBar(navController: NavController) {
     val items = listOf(
-        BottomNavItem("home", R.drawable.home, "Home"),
-        BottomNavItem("post", R.drawable.newpost, "Post"),
-        BottomNavItem("profile", R.drawable.profile, "Profile")
+        BottomNavItem("home", R.drawable.home, ""),
+        BottomNavItem("post", R.drawable.newpost, ""),
+        BottomNavItem("profile", R.drawable.profile, "")
     )
 
     NavigationBar(
-        containerColor = MaterialTheme.colors.surface,
+        containerColor = PrimaryBlue,
     ) {
         val currentRoute = navController.currentBackStackEntry?.destination?.route
         items.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
-                label = { Text(item.title) },
                 selected = currentRoute == item.route,
                 onClick = {
                     navController.navigate(item.route) {

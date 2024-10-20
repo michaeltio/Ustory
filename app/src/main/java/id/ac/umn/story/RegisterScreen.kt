@@ -106,7 +106,7 @@ fun RegisterScreen(navController: NavController) {
                                     val user = hashMapOf(
                                         "username" to username,
                                         "nim" to nim,
-                                        "biography" to ""
+                                        "biography" to "Hi! I'm new to UStory"
                                     )
                                     userId?.let {
                                         firestore.collection("users").document(it).set(user)

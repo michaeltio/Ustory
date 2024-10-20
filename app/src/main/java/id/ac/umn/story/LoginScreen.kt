@@ -1,5 +1,7 @@
 package id.ac.umn.story
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -73,6 +75,7 @@ fun LoginScreen(navController: NavController) {
                         auth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
+                                    saveLoginState(context, true)
                                     navController.navigate("home") {
                                         popUpTo("login") { inclusive = true }
                                     }
@@ -95,4 +98,11 @@ fun LoginScreen(navController: NavController) {
             )
         }
     }
+}
+
+fun saveLoginState(context: Context, isLoggedIn: Boolean) {
+    val sharedPreferences: SharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    editor.putBoolean("is_logged_in", isLoggedIn)
+    editor.apply()
 }

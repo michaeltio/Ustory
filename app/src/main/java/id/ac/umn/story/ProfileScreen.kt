@@ -1,21 +1,175 @@
 package id.ac.umn.story
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import id.ac.umn.story.ui.theme.PrimaryBlue
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
-    Scaffold(
-        bottomBar = { BottomNavBar(navController) }
-    ) { innerPadding ->
-        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            Text("Profile Screen")
+    val auth = FirebaseAuth.getInstance()
+    val firestore = FirebaseFirestore.getInstance()
+    val userId = auth.currentUser?.uid
+    var user by remember { mutableStateOf<User?>(null) }
+    var userPosts by remember { mutableStateOf<List<Post>>(emptyList()) }
+    var expanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(userId) {
+        if (userId != null) {
+            firestore.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    user = document.toObject(User::class.java)
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ProfileScreen", "Error fetching user data", e)
+                }
+            firestore.collection("posts").whereEqualTo("userId", userId).get()
+                .addOnSuccessListener { documents ->
+                    userPosts = documents.map { it.toObject(Post::class.java) }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ProfileScreen", "Error fetching user posts", e)
+                }
         }
     }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Profile") },
+                actions = {
+                    Box {
+                        IconButton(onClick = { expanded = true }) {
+                            Icon(painterResource(id = R.drawable.menu_icon), contentDescription = "More")
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Log Out") },
+                                onClick = {
+                                    auth.signOut()
+                                    navController.navigate("login") {
+                                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            )
+        },
+        bottomBar = { BottomNavBar(navController) }
+    ) { contentPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            user?.let {
+                Image(
+                    painter = painterResource(id = R.drawable.profile),
+                    contentDescription = "User Photo",
+                    modifier = Modifier
+                        .size(128.dp)
+                        .clickable { }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = it.username,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Edit Profile",
+                    color = PrimaryBlue,
+                    modifier = Modifier.clickable { /* Handle edit profile click */ }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Biography",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = it.biography,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "NIM: ${it.nim}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Posts",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                LazyColumn {
+                    items(userPosts) { post ->
+                        PostItem(post)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PostItem(post: Post) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = post.caption, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = "Likes: ${post.likes}", style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+data class User(
+    val username: String = "",
+    val biography: String = "",
+    val nim: String = ""
+)
+
+data class Post(
+    val caption: String = "",
+    val likes: Int = 0,
+    val postId: String = "",
+    val userId: String = "",
+    val username: String = ""
+)
+
+@Preview
+@Composable
+fun ProfileScreenPreview() {
+    ProfileScreen(rememberNavController())
 }
