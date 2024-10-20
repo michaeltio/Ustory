@@ -10,17 +10,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import id.ac.umn.story.ui.theme.PrimaryBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,6 +31,7 @@ fun ProfileScreen(navController: NavController) {
     var userPosts by remember { mutableStateOf<List<Post>>(emptyList()) }
     var expanded by remember { mutableStateOf(false) }
 
+
     LaunchedEffect(userId) {
         if (userId != null) {
             firestore.collection("users").document(userId).get()
@@ -42,7 +41,10 @@ fun ProfileScreen(navController: NavController) {
                 .addOnFailureListener { e ->
                     Log.e("ProfileScreen", "Error fetching user data", e)
                 }
-            firestore.collection("posts").whereEqualTo("userId", userId).get()
+
+            firestore.collection("posts")
+                .whereEqualTo("userId", userId)
+                .get()
                 .addOnSuccessListener { documents ->
                     userPosts = documents.map { it.toObject(Post::class.java) }
                 }
@@ -81,60 +83,60 @@ fun ProfileScreen(navController: NavController) {
         },
         bottomBar = { BottomNavBar(navController) }
     ) { contentPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            user?.let {
-                Image(
-                    painter = painterResource(id = R.drawable.profile),
-                    contentDescription = "User Photo",
-                    modifier = Modifier
-                        .size(128.dp)
-                        .clickable { }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = it.username,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Edit Profile",
-                    color = PrimaryBlue,
-                    modifier = Modifier.clickable { /* Handle edit profile click */ }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Biography",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = it.biography,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "NIM: ${it.nim}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Posts",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                LazyColumn {
-                    items(userPosts) { post ->
-                        PostItem(post)
-                    }
+            item {
+                user?.let {
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = "User Photo",
+                        modifier = Modifier
+                            .size(128.dp)
+                            .clickable { }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = it.username,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Edit Profile",
+                        color = PrimaryBlue,
+                        modifier = Modifier.clickable { /* Handle edit profile click */ }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Biography",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = it.biography,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "NIM: ${it.nim}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Posts",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
+            }
+            items(userPosts) { post ->
+                PostItem(post)
             }
         }
     }
@@ -144,15 +146,6 @@ data class User(
     val username: String = "",
     val biography: String = "",
     val nim: String = ""
-)
-
-data class Post(
-    val caption: String = "",
-    val likes: Int = 0,
-    val postId: String = "",
-    val userId: String = "",
-    val username: String = "",
-    val imageUrl: String = ""
 )
 
 @Preview

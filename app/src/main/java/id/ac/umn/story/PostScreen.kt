@@ -123,7 +123,8 @@ fun PostScreen(navController: NavController) {
                             "userId" to userId,
                             "username" to username.value,
                             "caption" to caption,
-                            "likes" to 0
+                            "likes" to 0,
+                            "timestamp" to System.currentTimeMillis() // Add timestamp here
                         )
                         if (imageUri != null) {
                             val imageRef = storage.reference.child("posts/$postId.jpg")

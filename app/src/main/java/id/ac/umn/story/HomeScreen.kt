@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -33,7 +34,9 @@ fun HomeScreen(navController: NavController) {
                 }
         }
 
-        firestore.collection("posts").get()
+        firestore.collection("posts")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     posts.add(document.toObject(Post::class.java))
