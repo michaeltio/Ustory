@@ -17,6 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import id.ac.umn.story.ui.theme.PrimaryBlue
@@ -138,22 +140,6 @@ fun ProfileScreen(navController: NavController) {
     }
 }
 
-@Composable
-fun PostItem(post: Post) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = post.caption, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Likes: ${post.likes}", style = MaterialTheme.typography.bodyMedium)
-        }
-    }
-}
-
 data class User(
     val username: String = "",
     val biography: String = "",
@@ -165,7 +151,8 @@ data class Post(
     val likes: Int = 0,
     val postId: String = "",
     val userId: String = "",
-    val username: String = ""
+    val username: String = "",
+    val imageUrl: String = ""
 )
 
 @Preview
