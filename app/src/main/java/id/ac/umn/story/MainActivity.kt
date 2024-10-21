@@ -29,12 +29,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    //ngambil data login jika tersimpan di shared preferences
     private fun getLoginState(context: Context): Boolean {
         val sharedPreferences: SharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean("is_logged_in", false)
     }
 }
 
+//daftar route
 @Composable
 fun NavigationComponent(navController: NavHostController, isLoggedIn: Boolean) {
     NavHost(navController = navController, startDestination = if (isLoggedIn) "home" else "landing") {
@@ -44,5 +46,6 @@ fun NavigationComponent(navController: NavHostController, isLoggedIn: Boolean) {
         composable("home") { HomeScreen(navController) }
         composable("post") { PostScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
+        composable("edit_profile") { EditProfileScreen(navController) }
     }
 }

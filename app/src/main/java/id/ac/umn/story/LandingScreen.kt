@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import id.ac.umn.story.ui.theme.PrimaryBlue
 
+//tampilan utama ketika kelar loading
 @Composable
 fun LandingScreen(navController: NavController) {
     Box(
@@ -39,6 +40,7 @@ fun LandingScreen(navController: NavController) {
                 color = PrimaryBlue,
                 textAlign = TextAlign.Center
             )
+            //tampilan menu register atau login
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = { navController.navigate("login") },

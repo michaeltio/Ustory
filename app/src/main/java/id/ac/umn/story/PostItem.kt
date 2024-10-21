@@ -14,7 +14,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import id.ac.umn.story.R
 
 @Composable
 fun PostItem(post: Post) {
@@ -23,6 +22,14 @@ fun PostItem(post: Post) {
     val currentUser = auth.currentUser
     var likes by remember { mutableStateOf(post.likes) }
     var likedByUser by remember { mutableStateOf(currentUser?.uid in post.likedBy) }
+    var username by remember { mutableStateOf("") }
+
+    LaunchedEffect(post.userId) {
+        firestore.collection("users").document(post.userId).get()
+            .addOnSuccessListener { document ->
+                username = document.getString("username") ?: "Unknown"
+            }
+    }
 
     Card(
         modifier = Modifier
@@ -42,7 +49,7 @@ fun PostItem(post: Post) {
                 Spacer(modifier = Modifier.height(8.dp))
             }
             Text(text = post.caption, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-            Text(text = post.username, style = MaterialTheme.typography.bodyMedium)
+            Text(text = username, style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(4.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -52,7 +59,7 @@ fun PostItem(post: Post) {
                 Icon(
                     painter = painterResource(id = if (likedByUser) R.drawable.liked else R.drawable.like),
                     contentDescription = "Like Button",
-                    tint = if(likedByUser) Color.Red else Color.Gray,
+                    tint = if (likedByUser) Color.Red else Color.Gray,
                     modifier = Modifier.clickable {
                         currentUser?.let { user ->
                             val userId = user.uid
@@ -75,13 +82,3 @@ fun PostItem(post: Post) {
     }
 }
 
-data class Post(
-    val caption: String = "",
-    val likes: Int = 0,
-    val postId: String = "",
-    val userId: String = "",
-    val username: String = "",
-    val imageUrl: String = "",
-    val timestamp: Long = 0L,
-    val likedBy: List<String> = emptyList()
-)

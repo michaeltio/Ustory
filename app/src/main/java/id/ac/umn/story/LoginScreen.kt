@@ -90,6 +90,7 @@ fun LoginScreen(navController: NavController) {
             ) {
                 Text(text = "Login", color = Color.White)
             }
+            //jika user tidak punya account
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Don't have an account? Register",
@@ -100,6 +101,7 @@ fun LoginScreen(navController: NavController) {
     }
 }
 
+//function untuk safe apakah user udah pernah login di device
 fun saveLoginState(context: Context, isLoggedIn: Boolean) {
     val sharedPreferences: SharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()

@@ -109,7 +109,7 @@ fun ProfileScreen(navController: NavController) {
                     Text(
                         text = "Edit Profile",
                         color = PrimaryBlue,
-                        modifier = Modifier.clickable { /* Handle edit profile click */ }
+                        modifier = Modifier.clickable { navController.navigate("edit_profile") }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -141,12 +141,6 @@ fun ProfileScreen(navController: NavController) {
         }
     }
 }
-
-data class User(
-    val username: String = "",
-    val biography: String = "",
-    val nim: String = ""
-)
 
 @Preview
 @Composable
