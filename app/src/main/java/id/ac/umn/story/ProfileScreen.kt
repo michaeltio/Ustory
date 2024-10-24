@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +31,7 @@ fun ProfileScreen(navController: NavController) {
     var user by remember { mutableStateOf<User?>(null) }
     var userPosts by remember { mutableStateOf<List<Post>>(emptyList()) }
     var expanded by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
 
     LaunchedEffect(userId) {
         if (userId != null) {
@@ -70,7 +71,8 @@ fun ProfileScreen(navController: NavController) {
                             DropdownMenuItem(
                                 text = { Text("Log Out") },
                                 onClick = {
-                                    auth.signOut()
+                                    auth.signOut() //menghapus sesi
+                                    saveLoginState(context, false) //set logni state ke false
                                     navController.navigate("login") {
                                         popUpTo(navController.graph.startDestinationId) { inclusive = true }
                                     }
